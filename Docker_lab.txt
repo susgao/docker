@@ -1,0 +1,137 @@
+Docker: It is an open source tool or platform for building, deploying and managing containerized application.
+
+Docker Image: a package
+
+Container: A way to package application with all the necessary dependencies and configuration.
+
+	VM			|		Docker/Container
+				|
+Hardware level process isolation	|	OS level process isolation
+Each VM has seperate OS		|	Each container can share OS
+Boots in minutes			|	Boot procedure takes only few seconds
+More resource usage		|	Less resource usage
+
+Ques: Create three websites using httpd image and host in on port 9000,9010,9020. Then the content of first html page should be your name,second should be PRN and third should be your course name.
+
+Ques1: Create a container of debian image take the shell of that container update the package then delete that container.
+Ques2: Create three nginx container running on port 7000,7001,7002. name the container as lab1,lab2,lab3. Create index.html for three websites. Copy these files inside the container and check if the website displays your webpage.
+
+***********************************************************************************************************************************
+
+03/12/2022
+
+Create a network adapter test
+Create a container with httpd
+Create a container with ubuntu
+Access ubuntu and update and upgrade packages
+Install curl
+
+#docker create network test
+#docker run --name lab1 -p 8000:80 -d httpd
+#docker pull ubuntu:20.04
+#docker run --name c1 -ti -d ubuntu:20.04
+
+Now interactive shell will open of ubuntu image
+
+#apt-get update
+#apt-get upgrade
+#apt-get install curl
+
+#curl http:/172.17.0.2		(for accessing http container)
+
+Again create a container with http image
+
+#mkdir website
+#echo My webpage > index.html
+#docker run --name data -p 8001:80 -d -v /root/website/:/usr/local/apache2/htdocs
+
+Now open the shell of container Ubuntu i.e c1
+
+#docker start c1
+#docker attach c1
+
+#curl http://172.18.0.4/
+#curl http://data/
+
+Ques: Create a new network by name ditiss. Create two containers httpd and ubuntu. In httpd container provide the content using docker volume and host it on ubuntu container as well as base machine. take port 9500 for base machine
+
+***********************************************************************************************************************************
+
+
+Docker Compose
+
+for docker compose install packages
+#yum install epel-release.noarch
+#yum install python* -y
+#yum install docker-compose
+#docker-compose -v
+#docker-compose -f lab01.yaml up -d
+#docker-compose -f lab01.yaml down
+
+#vim lab01.yaml
+
+version: '3'
+services:
+    web1:
+      image: httpd
+      ports:
+        - 9000:80
+    web2:
+      image: nginx
+      ports:
+        - 9001:80
+      volumes:
+        - /root/website/:usr/share/nginx/html/
+    c1:
+      image: ubuntu:20.04
+      tty: true
+
+tty tells docker to allocate a virtual terminal session within a container.
+
+Ques: Create four containers using docker-compose.
+	- first container for httpd (default webpage)
+	- second container for nginx (your own webpage)
+	- third container for debian
+	- fourth container for centOS
+	Then remove all four containers.
+
+***********************************************************************************************************************************
+
+05/12/2022
+
+To attach a network to docker-compose
+
+version: '3'
+services:
+    web1:
+      image: httpd
+      networks:
+        - ditiss_lab1
+      ports:
+        - 9000:80
+    web2:
+      image: nginx
+      networks:
+        - ditiss_lab1
+      ports:
+        - 9001:80
+      volumes:
+        - /root/website/:/usr/share/nginx/html/
+    c1:
+      image: ubuntu:20.04
+      networks:
+        - ditiss_lab1
+      stdin_open: true
+      tty: true
+    c2:
+      image: centos
+      networks:
+        - ditiss_lab1
+      stdin_open: true
+      tty: true
+
+networks:
+      ditiss_lab1:
+        external: true
+
+stdin_open tells the docker to make the allocated virtual terminal interactive.
