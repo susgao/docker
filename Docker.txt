@@ -1,0 +1,286 @@
+Docker
+
+#yum install docker
+#systemctl start docker
+
+/var/lib/docker		(Directory that stores docker files)
+
+#docker images		(what images are present on local repository)
+
+hub.docker.com		(repo for docker)
+
+#docker pull <image name>	(pull the images from docker's repo)
+#docker pull ubuntu
+
+#uname -r	(know kernel verison on linux)
+#uname -a
+#docker ps	(list running containers)
+#docker ps -a	(list all the container process running and stopped)
+#docker start <container name/id>
+#docker stop <container name/id>
+#docker rm <container name/id>	(to remove a container)
+#docker run --name <container name>	(specify a custom name to container)
+
+#docker run --name u1 -ti ubuntu	(-ti --> this flag will take you inisde OS's shell. After running this we will go inisde the container)
+
+#docker exec u1 mkdir /demo
+
+#docker attach <container name/id>	(attach the shell/opens the container shell)
+
+***************************************************************************
+
+#docker pull htpd:2.4
+
+#docker run --name web1 -p 8080:80 -d httpd:2.4
+
+-p <outside port>:<container port>	eg: 80:80
+
+-d		(detach: take the container from foreground to background)
+**************************************************************************
+
+COPY Files from Outside to Container
+
+#docker cp index.html web1:/usr/local/apache2/htdocs/
+
+
+Problem with PORT Mapping
+++ everytime you need to copy index.html file if you want to modify the file
+++if new users want to connect to our server then we have to make new containers which will become hectic.
+
+****************************************************************************************************
+
+#docker run --name web2 -p 8100:80 -d -v /web-data:/usr/local/apache2/htdocs/ httpd:2.4
+
+#setenforce 0
+
+****************************************************************************************************
+
+25/11/2022
+
+#docker logs
+
+#docker inspect <container name/id>		(used to gather info about container. Output is in JSON format)
+
+#docket network ls		(shows all the docker network)
+
+#docker network create <networkname>	(to create a new network adapter)
+
+#docker run --name web2 -p 8100:80 -d --network app1 httpd:2.4		(attach network apdapter to the service that you want to host)
+
+++Default Adapter of Docker (docker0) doesn't have DNS service but the other network adapters that we create have DNS service by the name we create the network adapter. Automatically name is mapped to IP.
+
+
+++Since docker images are READ-ONLY if we create a directory inside container this doesn't mean that whenever new subsequent containers are created those directories will be present.
+
+#docker commit		(used to create an image from container's changes) (save a contanier's state as an image like a snapshot)
+
+#docker commit u1 user1:latest
+#docker commit <previous created container> <name of image>:<latest backup>
+
+++Now using docker commit we saved the container as an image so that all the changes made inside the container are still available in the image even if the container is deleted.
+
+*********************************************************************************************************************************************************************************************************************************
+Images can be of any application. An application can be any program. And you can write any script and execute it.
+Creating Image
+
+#vim hello.py
+
+Create a seperate directory for each of your application image. Dockerfile is always necessary whenever creating an image. Docker reads from this image.
+
+#vim Dockerfile
+FROM python:3.10-buster
+RUN mkdir /app1	(here we are creating a seperate directory for our application)
+COPY hello.py /app1	(copying hello.py to app1 directory)
+CMD [ "python","/app1/hello.py" ]	(mark this command for execution)
+:wq
+
+#docker build -t hello-py:v1 .		(to build images from a Dockerfile) (-t --> tag and . is current directory where Dockerfile is present)
+
+if you face an error while building the container use /bin/bash to access the terminal. 
+
+#docker run --name p1 hello-py:v1 /bin/bash		(/bin/bash is used here to override the python code otherwise if we run #docker run --name p1 hello-py:v1 the code i.e "Hello World will be executed")
+
+*********************************************************************************************************************************************************************************************************************************
+
+26/11/2022
+
+#docker images		(lists all the image)
+
+#docker run --name a2 -p 7000:80 -d app2		(app2 is the image that we have created and a2 is the name of the container that will contain the app2 image)
+#docker push <username/repo-name>		(docker push sandeepwalvekar/ditiss22)
+In docker push we cannot push an image if the image name doesn't match the name of our repository. therefore remeber to match the image name with the name of the repository.
+
+#docker tag		(to rename a docker image)
+
+#docker tag oldimgae:tag newimage:tag		(syntax)
+#docker tag app2 sandeepwalvekar/ditiss22		(example)
+#docker login	(provide username and password to login otherwise you wont be able to push the code form your repo)
+
+#docker rmi <image name>		(to delete an image where multiple images have same commit ID, use image name instead of image ID)
+
+#docker pull <username/repo-name>
+                                                                                                                        
+multiple containers are hosted in a server. Now if the server goes down then all the container will go down which in turn stops the services hosted on the containers.. Therefore docker swarm and (Kubernetes) K8S is used.
+docker swarm works with docker files only. K8S is platform independent, open-source developed by google.
+Working of docker and k8s is same.
+
+Q-->Why docker uses layered architecture to pack images?
+A-->so that any layer can be used anywhere.
+
+#docker swarm init
+
+metadata ---> data about data		(example list of nodes, node configuration, current load on nodes)
+
+example: User wants 3 replicas...so manager will select 3 nodes 
+replica set --> the number of containers that user wants to start on different server
+
+advantage of this configurations is 
++Availability --> whataevr replica we have we can use that to download the images and start container
+
+docker join command --> used to join new nodes to exisiting cluster.
+
+pods --> a group of containers
+
+deployment --> a group of pods
+
+************************************************************************************************************************************************************************************************
+
+28-29/11/2022
+
+DCM
+
+************************************************************************************************************************************************************************************************
+
+30/11/2022
+
+Adding Networking adpaters in master, node1 & node2
+
+#sudo systemctl status systemd-networkd
+
+#vim /etc/netplan/01-netcfg.yaml
+
+enp0s8:
+     dhcp4: yes
+
+#sudo netplan apply
+
+#ifconfig
+
+
+tasksel --> command used to install desktop environment in ubuntu.
+
+#docker swarm init			(to start cluster)
+
+
+copy the node token that generates after docker swarm init and paste it in node-join-token file
+# docker swarm init --advertise-addr 192.168.12.8
+
+# vim node-join-token
+#sudo apt install ssh
+#scp node-join-token 192.168.12.7:/home/uadmin
+#docker node ls & #docker service ls
+https://docs.docker.com/engine/swarm/swarm-tutorial/deploy-service/
+
+#sudo docker service create --name web1 nginx
+
+#docker service ps		(after starting the service to know where the service is hosted in the cluster)
+
+#docker service ps web1
+
+By default docker swarm will start running all the services on itself. which will create problem because master machine in the cluster is the manager and it has to manage also...if we want to run a service on a different node we have to specify specifically. This is a disdvantage of Docker Swarm.
+
+Same hardware we all are able to share.
+
+#docker service rm web1
+
+#docker service scale web1=6		(scaling up the service on different nodes)	(load balancing) (when users increase we scale up)
+#docker service create --name web1 --publish 8000:80 nginx	(deploy your service)
+
+#docker service ls		(lists all the service)
+
+*****************************************************************************************************************************************************************************************************
+
+1/12/2022
+
+Kubernetees (K8s)
+
+by default kubernetees will check if virtual memory is on or off.If it is on then kubelet will not start 	(swapoff -a)
+Another advantage of K8s
+
+#kubeadm init		(to start the cluster)
+kubelet		(node agent)
+
+  6443		|
+10259		|		Kubelet ports
+10257		|
+
+#kubectl get nodes			(to list the nodes)
+
+#cp -i /etc/kubernetees/admin.conf .kube/config
+#chown uadmin:uadmin .kube/config
+#kubectl get pods --all-namespaces
+#kubectl get namespaces
+
+flannel -->> network plugin to manage all the network of  pods
+
+#kubectl delete -f https://flannel wali link
+
+#c
+#kubectl create pod
+#kubectl create
+
+Q: command to deploy an image?
+A: 
+
+kubectl create deployment web1 --image=nginx
+
+unable to allocate IP address failed to create pod
+
+************************************************************************************************************************************
+
+2/12/2022
+
+Cloud Computing
+Cloud basically means cluster of Hypervisor machine.
+
+VPC : Virtual Private Cloud --> when a user creates his/her own cloud in a Virtual Machine
+Infrastructure as a Service	(IaaS) --> Providing raw VMs
+AWS
+
+************************************************************************************************************************************
+
+3/12/2022
+
+Platform as a Service (PaaS) --> complete development and deployment environment in the cloud. 
+ 
+Providing only platform where a user can install only a specific software related libraries. Example:- (when a python platform is provided a user can download only python related softwares and libraries and not JAVA or JAVA related softwares and libraries)
+
+war --> java webapplication file
+var --> java local file
+
+rollout: whenever we want to update our application but we dont want to stop our container that is running with the current verison of our image.
+rollback: whenever we want to downgrade
+
+Software as a Service (SaaS)
+-- no piracy
+-- no troubleshooting on client side
+-- no patches to deliver for clients for new updates
+-- no cd/dvd which reduces the expenses
+-- less investment into hardware because our application will run on cloud
+
+
+3 types of cloud based on service
+IaaS
+PaaS
+SaaS
+
+cloud types based on Deployment --> who is building the cluod and who is using it.
+
+Private Cloud --> VPC
+Community Cloud --> a group of companies
+Public Cloud --> allowing your servers to be used by others (example Microsoft, Amazon)
+Hybrid Cloud --> Public + Private ()
+
+AWS lambda -- serverless
+Kanban
+Agile SCRUM

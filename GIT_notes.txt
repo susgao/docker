@@ -1,0 +1,93 @@
+Git is a version control tool, free and open source to handle everything from small to very large projects with speed and efficiency.
+
+Git is a client that we can install on the system while github is a remote repository where you can store the code, applications, projects etc.
+
+ In CentOS 07
+**************
+#yum install git
+
+#mkdir demo
+#cd demo
+#git init		(initialize local repository)
+
+++After initializing the local repository .git hidden folder is created.
+
+#mkdir test	(create on /root/Desktop)
+#git init
+# touch file1 file2
+#git add <filename>	(add file into Staging Area)
+#git add file1
+
+#git add file1 file2		(for multiple files)
+
+#git status		(check the status if a file has been added into the staging area or not)
+
+#touch file{3..10}
+
+#git add .		OR	#git add -A	(to add all the files into the staging area)	(. means current directory but -A flag will add all files from the current as well as its subdirectory in staging area.) 
+
+#git commit -m "optional comment"	-m	(for message)
+
+#git config - - global user.email "susgao789@gmail.com"
+
+#git clone <paste the linkof remote repo to clone>
+
+Ques: Create one folder inside that folder clone your remote repository then go to that folder create two folders (demo1 and demo2). Inside demo1 create five files and in demo2 create three files. Push all the files in your remote repository.
+Ans: C:\Users\dell\Documents\Git
+
+****************************************************************************
+
+Push wihtout cloning
+
+#git remote add origin <url of remote repository>
+#git push origin master/main		(branch name depends)
+
+
+****************************************************************************
+
+#git pull origin master
+
+
+****************************************************************************
+
+Ques: Create new repo on GITHUB initialize with readme file. On your linux machine create a directory and inside that directory create local repository. Create two folders inside that directory (web1 and web2). In web1 create one html file (HTML Content: your name) and web2 folder create two html files (Content: PRN, Course Name). Push all the files to remote repository.
+Create one file in remote repository and pull that file in local machine.
+
+****************************************************************************
+#git branch	(view branches)
+#git checkout <branch name>	(switch branches)
+
+****************************************************************************
+to merge a branch
+
+first checkout to the branch you want to merge into then
+#git merge <branch name you want to merge>
+
+example: #git checkout main
+	#git merge ditiss2
+
+Ques: Create a remote repository and clone into the Linux machine create 2 branches A and B,file 1 and file 2 will be  created in the main branch... upload into the repository. File 3 and 4 ( A branch) and upload it to the remote repository repository.File 5 and 6 ( B branch) and upload it to the remote repository 
+1) Branch A is merged with branch B and uploads it into a remote repository.
+2) The main branch is merged with A branch and upload it into a remote repository.
+
+Ans: C:\Users\dell\Documents\Git
+
+******************************************************************
+25/11/2022
+
+git reset, git revert and .gitignore file
+**********************************
+
+#git log		(maintains logs of every commit)
+#git log --oneline	(maintains log in single line)
+
+#git reset <commit ID of state where you want to go> --soft		(commit is resetted but content is not changed)	(message is not displayed on terminal window)
+#git reset <commit ID of state where you want to go> --hard		(commit is resetted also content is removed and also the file is removed)	(message is displayed on terminal window)
+
+#git revert <commit ID of the last state>	(message content is restored to last push but commit state remains the same)
+
+.gitignore
+
+#vim .gitignore
+*.txt	(to ignore all txt files)
+index.html	(to ignore a particular file)

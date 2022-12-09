@@ -1,0 +1,30 @@
+
+
+subject -- > request
+Salutation -> Dear <name>
+	     Respected <name>
+Greetings of the day!
+Hope you are doing well.
+
+body --> each para should not be more than 16 - 18 words.
+
+{
+Intro (Why)
+Body
+	-What
+	-Replacement/Solution
+
+Conclusion
+	-Summary in one line
+	-any query please let me know
+}
+
+
+
+ending
+
+Thank You
+Thanks & Regards
+Name
+Mobile
+Address
